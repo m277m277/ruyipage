@@ -112,7 +112,7 @@ If your target site is highly sensitive to automation, it is better to start fro
 
 ### Recommended Approach
 
-Your own recommended Firefox kernel should be the first choice.
+The Firefox kernel solution provided by this project is the recommended first choice.
 
 At the same time, `ruyiPage` can also work with any Firefox fingerprint browser.
 
@@ -135,7 +135,7 @@ The role of `ruyiPage` is:
 
 But if you are visiting high-risk sites, it is still recommended to:
 
-1. use your recommended Firefox kernel first
+1. use the Firefox kernel solution recommended by this project first
 2. then use `ruyiPage` to automate it
 
 That combination is generally more stable.
@@ -172,7 +172,7 @@ The table below is not about declaring one framework absolutely better than anot
 
 | Framework | Main browser direction | Underlying protocol | CDP exposure surface | Firefox / BiDi support | Targeted detection |
 | --- | --- | --- | --- | --- | --- |
-| `ruyiPage` | **Firefox** | **WebDriver BiDi** | **No CDP exposure surface** | **High**, Firefox + BiDi is the main route | **Low**, native BiDi + `isTrusted` behavior + human-like actions fit high-risk scenarios better; even more stable with a custom Firefox kernel or a Firefox fingerprint browser |
+| `ruyiPage` | **Firefox** | **WebDriver BiDi** | **No CDP exposure surface** | **High**, Firefox + BiDi is the main route | **Low**, native BiDi + `isTrusted` behavior + human-like actions fit high-risk scenarios better; even more stable with the Firefox kernel solution recommended by this project or any Firefox fingerprint browser |
 | Playwright | Chromium / Firefox / WebKit | Proprietary protocol, many features still lean toward Chromium | Medium to high | Medium, supports Firefox but is not primarily designed around Firefox BiDi | Medium to high, many sites target mainstream automation fingerprints first |
 | Selenium | Multiple browsers | WebDriver Classic + partial BiDi | Low to medium | Medium, broad compatibility but weaker high-level BiDi capabilities | Medium, traditional automation traits are widespread |
 | Puppeteer | Chromium | CDP | **High** | Low, not really focused on Firefox | **High**, CDP-based exposure is more obvious and more frequently targeted |
@@ -207,7 +207,7 @@ The images below show real scenarios. To keep the GitHub homepage more compact, 
 </table>
 
 > These images demonstrate real-world capability along the Firefox route.
-> If the target site is more heavily protected, it is still recommended to pair it with your recommended Firefox kernel or any suitable Firefox fingerprint browser.
+> If the target site is more heavily protected, it is still recommended to pair it with the Firefox kernel solution recommended by this project or any suitable Firefox fingerprint browser.
 
 ---
 

@@ -112,7 +112,7 @@
 
 ### 推荐方式
 
-优先推荐你自己的 Firefox 内核版本。
+优先推荐使用本项目提供的 Firefox 内核方案。
 
 同时，`ruyiPage` 也可以配合任意 Firefox 指纹浏览器使用。
 
@@ -133,7 +133,7 @@
 
 但如果你访问的是高风控站点，仍然建议：
 
-1. 优先使用你推荐的 Firefox 内核
+1. 优先使用本项目推荐的 Firefox 内核方案
 2. 再用 `ruyiPage` 做自动化控制
 
 这样整体效果会更稳定。
@@ -170,7 +170,7 @@
 
 | 框架 | 主要浏览器方向 | 底层协议 | CDP 暴露面 | Firefox / BiDi 支持度 | 针对性被检测 |
 | --- | --- | --- | --- | --- | --- |
-| `ruyiPage` | **Firefox** | **WebDriver BiDi** | **无 CDP 暴露面** | **高**，主路线就是 Firefox + BiDi | **低**，原生 BiDi + `isTrusted` 行为 + 拟人操作，更适合高风控场景；配合定制 Firefox 内核或火狐指纹浏览器会更稳定 |
+| `ruyiPage` | **Firefox** | **WebDriver BiDi** | **无 CDP 暴露面** | **高**，主路线就是 Firefox + BiDi | **低**，原生 BiDi + `isTrusted` 行为 + 拟人操作，更适合高风控场景；配合本项目推荐的 Firefox 内核方案或任意火狐指纹浏览器会更稳定 |
 | Playwright | Chromium / Firefox / WebKit | 自有协议，很多能力仍偏 Chromium | 中到高 | 中，支持 Firefox，但不是以 Firefox BiDi 为核心设计 | 中到高，很多站点会优先针对主流自动化指纹做识别 |
 | Selenium | 多浏览器 | WebDriver Classic + 部分 BiDi | 低到中 | 中，兼容广，但高层 BiDi 能力不算强 | 中，传统自动化特征和使用面都比较广 |
 | Puppeteer | Chromium | CDP | **高** | 低，基本不是 Firefox 主战场 | **高**，CDP 路线暴露面更明显，也更容易被针对性检测 |
@@ -205,7 +205,7 @@
 </table>
 
 > 这些展示图用于说明 `ruyiPage` 在 Firefox 路线下的真实场景能力。
-> 如果目标站点风控更强，仍建议优先配合你推荐的 Firefox 内核，或任意可用的火狐指纹浏览器使用。
+> 如果目标站点风控更强，仍建议优先配合本项目推荐的 Firefox 内核方案，或任意可用的火狐指纹浏览器使用。
 
 ---
 
