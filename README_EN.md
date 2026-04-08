@@ -197,10 +197,39 @@ pip install ruyiPage --upgrade
 
 If this is your first installation, the command above also works as the default way to install the latest version.
 
+If you run the project from source, or distribute the source tree to students, install the project dependencies as well:
+
+```bash
+pip install -r requirements.txt
+```
+
+At minimum, the runtime dependencies include:
+
+```bash
+pip install websocket-client
+```
+
 Verify the installed version after installation:
 
 ```bash
 python -c "import ruyipage; print(ruyipage.__version__)"
+```
+
+### Common dependency issue
+
+`ruyiPage` depends on `websocket-client`, not `websocket`.
+
+If the wrong package is installed, you will commonly see:
+
+```bash
+AttributeError: module 'websocket' has no attribute 'create_connection'
+```
+
+Fix it with:
+
+```bash
+pip uninstall -y websocket websocket-client
+pip install websocket-client
 ```
 
 ---
