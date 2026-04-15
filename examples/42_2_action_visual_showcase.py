@@ -9,13 +9,14 @@
 - JS click / JS input 的鼠标反馈
 
 演示清单：
-  1) BiDi 鼠标移动 / 拟人移动
+  1) BiDi 鼠标移动 / 悬停 / 拟人移动
   2) BiDi 左键 / 双击 / 拟人点击
-  3) 拖拽
-  4) 元素 click / click_self
+  3) 多种拖拽
+  4) 元素 click / hover / drag_to
   5) JS click / JS input 的鼠标反馈
 
-使用本地 mouse-only 页面，无需外网。
+尽量覆盖本地 mouse-only 页面中的鼠标相关项目，
+仅去除右键和中键测试，无需外网。
 """
 
 import io
@@ -98,10 +99,14 @@ def main():
         )
         step(page, "0.2 JS 直接驱动画 S 形轨迹")
 
+        hover_target = page.ele("#hover-target")
+        drag_box = page.ele("#draggable")
+        drop_zone = page.ele("#drop-zone")
+
         # ─────────────────────────────────────────────────────
-        # BiDi Actions: 鼠标移动
+        # BiDi Actions: 鼠标移动 / 悬停
         # ─────────────────────────────────────────────────────
-        print("\n[A] 鼠标移动轨迹")
+        print("\n[A] 鼠标移动轨迹与悬停")
 
         # 1) move_to: 视口坐标移动
         page.actions.move_to((200, 200)).perform()
@@ -123,15 +128,27 @@ def main():
         page.actions.move(-50, 50).perform()
         step(page, "   move(-50, +50) 左下")
 
-        # 3) human_move: 拟人贝塞尔曲线移动
+        # 3) move_to(element): 移动到页面悬停区域
+        if hover_target:
+            page.scroll.to_see(hover_target, center=True)
+            page.wait(0.4)
+            page.actions.move_to(hover_target).perform()
+            step(page, "3. move_to(#hover-target) 进入悬停区")
+
+        # 4) human_move: 拟人贝塞尔曲线移动
         page.actions.human_move((800, 200)).perform()
-        step(page, "3. human_move(800,200) 拟人轨迹")
+        step(page, "4. human_move(800,200) 拟人轨迹")
 
         page.actions.human_move((300, 600)).perform()
         step(page, "   human_move(300,600) 拟人轨迹")
 
         page.actions.human_move((900, 400)).perform()
         step(page, "   human_move(900,400) 拟人轨迹")
+
+        # 5) 元素 hover: 走元素级悬停
+        if hover_target:
+            hover_target.hover()
+            step(page, "5. hover_target.hover() 元素悬停")
 
         # ─────────────────────────────────────────────────────
         # BiDi Actions: 鼠标点击
@@ -140,43 +157,58 @@ def main():
 
         click_btn = page.ele("#click-btn")
 
-        # 4) click: 标准左键点击
+        # 6) click: 标准左键点击
         page.actions.click(click_btn).perform()
-        step(page, "4. click(btn) 标准左键")
+        step(page, "6. click(btn) 标准左键")
 
-        # 5) double_click: 双击
+        # 7) double_click: 双击
         dbl_btn = page.ele("#double-click-btn")
         page.actions.double_click(dbl_btn).perform()
-        step(page, "5. double_click(btn) 标准双击")
+        step(page, "7. double_click(btn) 标准双击")
 
-        # 6) human_click: 拟人化左键点击
+        # 8) human_click: 拟人化左键点击
         page.actions.human_click(click_btn).perform()
-        step(page, "6. human_click(btn) 拟人左键")
+        step(page, "8. human_click(btn) 拟人左键")
 
         # ─────────────────────────────────────────────────────
         # BiDi Actions: 按住/释放/拖拽
         # ─────────────────────────────────────────────────────
         print("\n[C] 拖拽")
 
-        # 7) hold / move / release
-        page.actions.move_to((300, 400)).hold().perform()
-        page.wait(0.3)
-        page.actions.move_to((500, 400), duration=300).perform()
-        page.wait(0.3)
-        page.actions.release().perform()
-        step(page, "7. hold → move → release 手动拖动")
-
-        # 8) drag_to: 标准拖拽
-        drag_box = page.ele("#draggable")
-        drop_zone = page.ele("#drop-zone")
         if drag_box and drop_zone:
-            page.actions.drag_to(drag_box, drop_zone, duration=600).perform()
-            step(page, "8. drag_to(box → zone) 标准拖拽")
+            page.scroll.to_see(drag_box, center=True)
+            page.wait(0.5)
+
+            # 9) hold / move_to / release: 用页面拖拽元素手动拖到目标区
+            page.actions.move_to(drag_box).hold().perform()
+            page.wait(0.3)
+            page.actions.move_to(drop_zone, duration=420).perform()
+            page.wait(0.3)
+            page.actions.release().perform()
+            step(page, "9. move_to(drag_box) → hold → move_to(drop_zone) → release")
+
+            # 10) move_to + move: 先回拖拽源附近，再做相对拖动
+            drag_center = drag_box._get_center() or {"x": 0, "y": 0}
+            drop_center = drop_zone._get_center() or {"x": 0, "y": 0}
+            page.actions.move_to(drag_box).hold().perform()
+            page.wait(0.3)
+            page.actions.move(
+                int(drop_center.get("x", 0)) - int(drag_center.get("x", 0)),
+                int(drop_center.get("y", 0)) - int(drag_center.get("y", 0)),
+                duration=450,
+            ).perform()
+            page.wait(0.3)
+            page.actions.release().perform()
+            step(page, "10. hold → move(dx,dy) → release 相对拖动")
+
+            # 11) drag_to: 标准拖拽
+            page.actions.drag_to(drag_box, drop_zone, duration=700).perform()
+            step(page, "11. actions.drag_to(box → zone) 标准拖拽")
 
         # ─────────────────────────────────────────────────────
         # 元素级操作 (Clicker / element)
         # ─────────────────────────────────────────────────────
-        print("\n[D] 元素 click 与 JS click")
+        print("\n[D] 元素 click / hover / drag 与 JS click")
 
         # 先滚到按钮区域
         btn_section = page.ele("#button-section")
@@ -188,41 +220,55 @@ def main():
         if click_btn:
             page.scroll.to_see(click_btn, center=True)
             page.wait(0.4)
-            # 9) ele.click.left
+            # 12) ele.click.left
             click_btn.click.left()
-            step(page, "9. ele.click.left()")
+            step(page, "12. ele.click.left()")
 
-            # 10) 元素偏移点击演示
+            # 13) 元素偏移点击演示
             center = click_btn._get_center() or {"x": 0, "y": 0}
             page.actions.move_to(
                 (int(center.get("x", 0)) - 18, int(center.get("y", 0)))
             ).click().perform()
-            step(page, "10. 元素偏移点击（稳定演示版）")
+            step(page, "13. 元素偏移点击（稳定演示版）")
 
-            # 11) ele.click_self
+            # 14) ele.click_self
             page.scroll.to_see(click_btn, center=True)
             page.wait(0.4)
             click_btn.click_self()
-            step(page, "11. ele.click_self()")
+            step(page, "14. ele.click_self()")
 
-        # 12) ele.double_click (走 Actions 链)
+        # 15) ele.double_click (走 Actions 链)
         dbl_btn = page.ele("#double-click-btn")
         if dbl_btn:
             dbl_btn.double_click()
-            step(page, "12. ele.double_click()")
+            step(page, "15. ele.double_click()")
 
-        # 13) ele.click.by_js (现在也有可视化)
+        # 16) ele.hover()
+        if hover_target:
+            page.scroll.to_see(hover_target, center=True)
+            page.wait(0.4)
+            hover_target.hover()
+            step(page, "16. ele.hover()")
+
+        # 17) ele.drag_to()
+        if drag_box and drop_zone:
+            page.scroll.to_see(drag_box, center=True)
+            page.wait(0.4)
+            drag_box.drag_to(drop_zone, duration=0.8)
+            step(page, "17. drag_box.drag_to(drop_zone)")
+
+        # 18) ele.click.by_js (现在也有可视化)
         js_click_btn = page.ele("#js-click-btn")
         if js_click_btn:
             js_click_btn.click.by_js()
-            step(page, "13. js-click-btn.click.by_js() — JS click 也显示反馈")
+            step(page, "18. js-click-btn.click.by_js() — JS click 也显示反馈")
 
         # ─────────────────────────────────────────────────────
         # JS 输入只保留鼠标反馈
         # ─────────────────────────────────────────────────────
         print("\n[E] JS 输入的鼠标反馈")
 
-        # 滚回表单区
+        # 先悬停输入框，再执行 JS 输入
         form_section = page.ele("#form-section")
         if form_section:
             page.scroll.to_see(form_section)
@@ -230,8 +276,10 @@ def main():
 
         email_input = page.ele("#email-input")
         if email_input:
+            page.actions.move_to(email_input).perform()
+            step(page, "19. move_to(#email-input) 输入框悬停")
             email_input.input("js-demo@ruyi.dev", by_js=True)
-            step(page, "14. ele.input(..., by_js=True) — 仅保留鼠标反馈")
+            step(page, "20. ele.input(..., by_js=True) — 仅保留鼠标反馈")
 
         # ─────────────────────────────────────────────────────
         # 完成
