@@ -820,6 +820,10 @@ class Firefox(object):
         ws_url = get_bidi_ws_url(host, int(port_str), timeout=5)
         self._driver.start(ws_url)
         self._create_session()
+        if not self._session_id:
+            raise BrowserConnectError(
+                "无法在 {} 上创建可用的 WebDriver 会话".format(self._address)
+            )
         self._subscribe_events()
         self._setup_proxy_auth()
         self._refresh_tabs()
@@ -992,6 +996,8 @@ class Firefox(object):
             self._driver = BrowserBiDiDriver(self._address)
             self._driver.start(ws_url)
             self._create_session()
+            if not self._session_id:
+                return False
             self._subscribe_events()
             self._setup_proxy_auth()
             self._setup_download_behavior()
@@ -1028,6 +1034,9 @@ class Firefox(object):
         self._teardown_proxy_auth()
 
         if not self._driver:
+            return
+
+        if not self._session_id:
             return
 
         if not self._options.proxy:
@@ -1218,6 +1227,9 @@ class Firefox(object):
 
         包括导航相关的 navigationStarted 和 navigationFailed 事件。
         """
+        if not self._driver or not self._session_id:
+            return
+
         try:
             bidi_session.subscribe(
                 self._driver,
