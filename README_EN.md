@@ -743,7 +743,10 @@ If the SOCKS5 proxy address and password are stored in `fpfile`, your code does 
 For example, an `fpfile` supported by your Firefox kernel can contain:
 
 ```text
-gate.kookeey.info:1000:your-user:your-password
+socksauth.host:proxy.example.com
+socksauth.port:1000
+socksauth.username:<load from private configuration; do not commit to docs or code>
+socksauth.password:<load from private configuration; do not commit to docs or code>
 ```
 
 ```python

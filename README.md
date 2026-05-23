@@ -740,7 +740,10 @@ page.get("http://ipinfo.io/json")
 `fpfile` 可以使用你的 Firefox 内核支持的格式，例如：
 
 ```text
-gate.kookeey.info:1000:your-user:your-password
+socksauth.host:proxy.example.com
+socksauth.port:1000
+socksauth.username:<从安全配置读取，不要写入公开文档或代码>
+socksauth.password:<从安全配置读取，不要写入公开文档或代码>
 ```
 
 ```python
